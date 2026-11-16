@@ -74,7 +74,7 @@ Each image also gets a dated tag (`minimal-20261024`) and, from an OS release, a
 | `files/usr/libexec/marah-os/update`, `files/usr/lib/systemd/system/marah-os-update.*` | Daily, from 3 minutes after start (and every 15 minutes while offline): stage the next image, and the right one for the graphics card (an NVIDIA PC switches to `:minimal-nvidia`; with Secure Boot on, only once Universal Blue's key is enrolled, which it queues). Downloads only: Fedora's own timer, which restarts the PC, is masked. |
 | `files/usr/lib/bootc/{install,kargs.d}/` | XFS root, a quiet boot with the splash, and `systemd.gpt_auto=0` (otherwise the EFI partition is mounted over `/boot` and updates fail to finish). |
 | `files/usr/lib/bootupd/grub2-static/configs.d/` | The boot menu stays hidden unless Esc or Shift is held. |
-| `grub-theme/` | The USB stick's boot menu theme: `make.sh` draws it from the logo and Inter into `marah-os/`, and writes `theme.cfg`, the GRUB lines that turn it on. With Secure Boot, GRUB loads no font file, so the entries use GRUB's own font. Not on the stick yet. |
+| `grub-theme/` | The USB stick's boot menu theme: `make.sh` draws it from the logo and Inter into `marah-os/`, and writes `theme.cfg`, the GRUB lines that turn it on. `add-to-iso.sh` puts both on the finished stick (build-iso.sh runs it). With Secure Boot, GRUB loads no font file, so the entries use GRUB's own font. The BIOS menu has no theme. |
 
 The build is a `FROM scratch` image, so the workflow splits it into one layer per package
 (`bootc-base-imagectl rechunk`, timestamps zeroed): a daily rebuild only changes the layers whose

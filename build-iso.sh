@@ -29,6 +29,8 @@ case "$out" in /*) ;; *) out=$PWD/$out ;; esac
 
 case "$method" in
     image-builder)
+        # xorriso and mtools put the boot menu theme on the finished stick (grub-theme/).
+        dnf5 -y -q install --setopt=install_weak_deps=False xorriso mtools >/dev/null
         if [ -z "${IMAGE_BUILDER:-}" ]; then
             dnf5 -y -q install --setopt=install_weak_deps=False image-builder >/dev/null
             IMAGE_BUILDER="image-builder"
@@ -69,6 +71,7 @@ if [ "$method" = image-builder ]; then
     iso=$(find "$work/out" -name '*.iso' | head -1)
     [ -n "$iso" ] || { echo "error: image-builder made no ISO in $work/out" >&2; exit 1; }
     mv "$iso" "$out"
+    grub-theme/add-to-iso.sh "$out"
     ls -l "$out"
     exit 0
 fi
@@ -131,4 +134,5 @@ xorriso -as mkisofs -o "$out" -V "$label" -iso-level 3 -full-iso9660-filenames -
     -partition_offset 16 -append_partition 2 0xef "$esp" -appended_part_as_gpt \
     -e --interval:appended_partition_2:all:: -no-emul-boot \
     "$work/iso"
+grub-theme/add-to-iso.sh "$out"
 ls -l "$out"
