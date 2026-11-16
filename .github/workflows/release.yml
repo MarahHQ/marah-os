@@ -1,0 +1,64 @@
+name: Release
+
+# Release Please keeps a release pull request open on main. It reads the Conventional Commit
+# messages since the last release, bumps version.txt and the versions in README.md, and writes
+# the changelog. Merging the pull request makes a draft release and its tag, v<version>
+# (force-tag-creation: without the tag Release Please can't find a draft and opens the same pull
+# request again).
+#
+# This workflow only makes the release. It starts os.yml on the tag, which builds the images and
+# the stick and publishes the release. GitHub doesn't start workflows for a tag made with a
+# workflow's own token, but it does start one asked for by name (workflow_dispatch), and
+# `--ref <tag>` runs it on the tag.
+#
+# Each Marah Launcher release writes its tag into marah-launcher.txt here (the Marah Bot's push
+# from MarahHQ/marah-launcher's package.yml), a fix or feat commit that opens the release pull
+# request.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions: {}
+
+# Two pushes close together never edit the release pull request at once.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release-please:
+    name: Release Please
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      pull-requests: write
+    outputs:
+      tag: ${{ steps.rp.outputs.release_created == 'true' && steps.rp.outputs.tag_name || '' }}
+    steps:
+      - id: rp
+        uses: googleapis/release-please-action@45996ed1f6d02564a971a2fa1b5860e934307cf7 # v5.0.0
+        with:
+          # Pull requests opened with the default token don't start CI. To get checks on the
+          # release pull request, add a personal access token (or a GitHub App's) as the
+          # RELEASE_PLEASE_TOKEN secret.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || github.token }}
+          config-file: .github/release-please-config.json
+          manifest-file: .github/release-please-manifest.json
+
+  start:
+    name: Start the build
+    needs: release-please
+    if: needs.release-please.outputs.tag != ''
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      # To start os.yml.
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: ${{ github.repository }}
+      TAG: ${{ needs.release-please.outputs.tag }}
+    steps:
+      - run: gh workflow run os.yml --ref "$TAG"

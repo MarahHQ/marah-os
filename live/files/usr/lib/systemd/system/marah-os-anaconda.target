@@ -1,0 +1,11 @@
+# On the USB stick: Fedora's installer (Anaconda) instead of Marah Launcher. Started by the boot entry
+# "Install Marah OS (choose partitions)" (systemd.unit=marah-os-anaconda.target), or from the
+# running stick by `marah-os-install --choose-partitions` (systemctl isolate). Everything else
+# graphical.target starts, Marah Launcher's session included, stops.
+[Unit]
+Description=Marah OS USB stick: install with your own partitions (Anaconda)
+Requires=basic.target
+After=basic.target
+Conflicts=rescue.service rescue.target greetd.service
+Wants=marah-os-anaconda.service NetworkManager.service systemd-logind.service systemd-user-sessions.service
+AllowIsolate=yes

@@ -1,0 +1,12 @@
+# Log "player" straight into the Marah Launcher session at boot, and again if it ever ends. The session
+# (/usr/bin/marah-session) comes with the marah-launcher package.
+[terminal]
+vt = 1
+
+[initial_session]
+command = "/usr/bin/marah-session"
+user = "player"
+
+[default_session]
+command = "/usr/bin/marah-session"
+user = "player"

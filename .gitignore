@@ -1,0 +1,8 @@
+# Stick builds (build-iso.sh), the rpm the image bundles (fetch-marah-launcher.sh), and make
+# vm's disks.
+/marah-os-*.iso*
+/.iso-work/
+/out/
+/marah-launcher-rpm/
+/os-vm.qcow2
+/os-vm-vars.fd
