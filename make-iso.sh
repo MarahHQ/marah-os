@@ -17,7 +17,7 @@ sudo=()
 mkdir -p "$(dirname "$out")"
 "${podman[@]}" run --rm --privileged --network host -v /var/lib/containers:/var/lib/containers \
     -v "$PWD:/src" -w /src -e CORE="$core" -e WORK=/src/.iso-work ${METHOD:+-e METHOD="$METHOD"} \
-    "$base" build-iso.sh "$out"
+    "$base" ./build-iso.sh "$out"
 "${sudo[@]}" rm -rf .iso-work
 "${sudo[@]}" chown "$(id -u):$(id -g)" "$out"
 ls -l "$out"
