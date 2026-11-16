@@ -16,8 +16,7 @@
           "type": "generic",
           "path": "README.md"
         }
-      ],
-      "release-as": "0.1.0"
+      ]
     }
   }
 }
