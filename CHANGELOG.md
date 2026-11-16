@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.2.0](https://github.com/MarahHQ/marah-os/compare/v0.1.0...v0.2.0) (2026-11-16)
+
+
+### Features
+
+* the USB stick's boot menu has the Marah theme ([#4](https://github.com/MarahHQ/marah-os/issues/4)) ([5ffd5a3](https://github.com/MarahHQ/marah-os/commit/5ffd5a33ac24b0f707eca203c7cb25633a071b38))
+
+
+### Bug Fixes
+
+* the stick builds again: make-iso.sh runs ./build-iso.sh, a path, not a name to look up ([#5](https://github.com/MarahHQ/marah-os/issues/5)) ([701218b](https://github.com/MarahHQ/marah-os/commit/701218b8e83af087b9bead9c4197f625f4a0d8b9))
+
 ## 0.1.0 (2026-11-16)
 
 
