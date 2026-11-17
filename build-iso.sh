@@ -25,6 +25,10 @@ method=${METHOD:-image-builder}
 work=${WORK:-$(mktemp -d /var/tmp/marah-os-iso.XXXXXX)}
 live=localhost/marah-os:live
 mkdir -p "$work"
+# podman's scratch space in the work folder too: from Fedora 45 it lays an overlay over the build
+# context, and in this container /var/tmp is itself an overlay, which can't hold one.
+mkdir -p "$work/tmp"
+export TMPDIR=$work/tmp
 case "$out" in /*) ;; *) out=$PWD/$out ;; esac
 
 case "$method" in
