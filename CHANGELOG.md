@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/MarahHQ/marah-os/compare/v0.2.0...v0.3.0) (2026-11-17)
+
+
+### Features
+
+* bundle Marah Launcher v0.3.0 ([525f664](https://github.com/MarahHQ/marah-os/commit/525f664fd00ff1a89c8c8997de36809abfe5c135))
+* Marah OS is Fedora 45 ([#8](https://github.com/MarahHQ/marah-os/issues/8)) ([7ad7234](https://github.com/MarahHQ/marah-os/commit/7ad72341c249fd5c9b3b0da6ef64cddb185cac5f))
+
 ## [0.2.0](https://github.com/MarahHQ/marah-os/compare/v0.1.0...v0.2.0) (2026-11-16)
 
 
