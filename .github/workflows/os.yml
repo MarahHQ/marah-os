@@ -48,7 +48,7 @@ env:
   # An OS release when it runs on an OS tag.
   RELEASE: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || '' }}
   SUFFIX: ${{ inputs.test && !startsWith(github.ref, 'refs/tags/v') && '-test' || '' }}
-  BASE: quay.io/fedora/fedora-bootc:44
+  BASE: quay.io/fedora/fedora-bootc:45
 
 defaults:
   run:
@@ -176,14 +176,16 @@ jobs:
           core="ghcr.io/$owner/marah-os@$DIGEST"
           sudo podman pull "$core"
           kernel=$(sudo podman run --rm "$core" rpm -q --qf '%{VERSION}-%{RELEASE}.%{ARCH}' kernel-core)
+          # The Fedora version comes from the image, so a move to the next Fedora is BASE alone.
+          fedora=$(sudo podman run --rm "$core" rpm -E %fedora)
           # Universal Blue builds the modules for each new Fedora kernel within about a day; until
           # then NVIDIA PCs keep the previous :minimal-nvidia.
-          if ! skopeo inspect --raw "docker://ghcr.io/ublue-os/akmods-nvidia-lts:main-44-$kernel" >/dev/null; then
+          if ! skopeo inspect --raw "docker://ghcr.io/ublue-os/akmods-nvidia-lts:main-$fedora-$kernel" >/dev/null; then
             echo "::notice::No NVIDIA modules for kernel $kernel yet: :minimal-nvidia stays as it is"
             echo "SKIP=1" >> "$GITHUB_ENV"
             exit 0
           fi
-          sudo podman build --build-arg CORE="$core" --build-arg KERNEL="$kernel" -f nvidia/Containerfile \
+          sudo podman build --build-arg CORE="$core" --build-arg FEDORA="$fedora" --build-arg KERNEL="$kernel" -f nvidia/Containerfile \
             -t "ghcr.io/$owner/marah-os:minimal-nvidia$SUFFIX" .
 
       - name: Check the image
