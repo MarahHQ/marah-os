@@ -9,9 +9,9 @@
 #   podman build --cap-add=all --security-opt=label=disable --device /dev/fuse -f Containerfile .
 # then split it into one layer per package (the workflow does this), so updates only download
 # what changed:
-#   podman run --rm --privileged -v /var/lib/containers:/var/lib/containers quay.io/fedora/fedora-bootc:44 \
+#   podman run --rm --privileged -v /var/lib/containers:/var/lib/containers quay.io/fedora/fedora-bootc:45 \
 #     /usr/libexec/bootc-base-imagectl rechunk IMAGE-BUILT IMAGE
-ARG BASE_IMAGE=quay.io/fedora/fedora-bootc:44
+ARG BASE_IMAGE=quay.io/fedora/fedora-bootc:45
 FROM ${BASE_IMAGE} AS builder
 # Fedora's smallest bootable set (bootc, systemd, the kernel, dnf), from Fedora's own packages:
 # its standard base is a headless server (cloud SDKs, QEMU for other processors, LVM, toolbox),

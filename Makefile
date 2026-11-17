@@ -3,7 +3,7 @@
 .PHONY: help image iso vm check
 
 IMAGE ?= localhost/marah-os:minimal
-BASE ?= quay.io/fedora/fedora-bootc:44
+BASE ?= quay.io/fedora/fedora-bootc:45
 ISO ?= marah-os-x86_64-$(shell cat version.txt).iso
 
 help: ## List the targets

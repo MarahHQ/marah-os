@@ -6,7 +6,7 @@
 # Runs in a privileged Fedora bootc container with the minimal image in its container storage,
 # from the repository root:
 #   podman run --rm --privileged -v /var/lib/containers:/var/lib/containers -v "$PWD:/src" -w /src \
-#     quay.io/fedora/fedora-bootc:44 build-iso.sh marah-os-x86_64-0.2.0.iso
+#     quay.io/fedora/fedora-bootc:45 build-iso.sh marah-os-x86_64-0.2.0.iso
 # Settings, from the environment:
 #   CORE           the minimal image to start from and to store (default
 #                  ghcr.io/marahhq/marah-os:minimal; a test build passes its :minimal-test)
@@ -25,6 +25,10 @@ method=${METHOD:-image-builder}
 work=${WORK:-$(mktemp -d /var/tmp/marah-os-iso.XXXXXX)}
 live=localhost/marah-os:live
 mkdir -p "$work"
+# podman's scratch space in the work folder too: from Fedora 45 it lays an overlay over the build
+# context, and in this container /var/tmp is itself an overlay, which can't hold one.
+mkdir -p "$work/tmp"
+export TMPDIR=$work/tmp
 case "$out" in /*) ;; *) out=$PWD/$out ;; esac
 
 case "$method" in

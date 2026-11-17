@@ -4,12 +4,12 @@
 # `make os-iso` run it:
 #   make-iso.sh [IMAGE] [OUTPUT]   default localhost/marah-os:minimal, marah-os-x86_64-<version>.iso
 #   (the version from version.txt)
-# BASE: the Fedora bootc image to run in (default quay.io/fedora/fedora-bootc:44). METHOD goes
+# BASE: the Fedora bootc image to run in (default quay.io/fedora/fedora-bootc:45). METHOD goes
 # to build-iso.sh (xorriso for the hand-made ISO).
 set -euo pipefail
 core=${1:-localhost/marah-os:minimal}
 out=${2:-marah-os-x86_64-$(cat version.txt).iso}
-base=${BASE:-quay.io/fedora/fedora-bootc:44}
+base=${BASE:-quay.io/fedora/fedora-bootc:45}
 podman=(podman)
 sudo=()
 [ "$(id -u)" = 0 ] || { podman=(sudo podman); sudo=(sudo); }

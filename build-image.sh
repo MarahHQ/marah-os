@@ -8,12 +8,12 @@
 # split into one layer per package with every timestamp zeroed: a daily rebuild then only
 # changes the layers whose packages changed, and that's all a PC downloads.
 # Settings, from the environment:
-#   BASE    the Fedora bootc image it starts from (default quay.io/fedora/fedora-bootc:44)
+#   BASE    the Fedora bootc image it starts from (default quay.io/fedora/fedora-bootc:45)
 #   IMAGE   where installed PCs update from (default ghcr.io/marahhq/marah-os)
 #   REPO    the GitHub repository of Marah Launcher's releases (default MarahHQ/marah-launcher)
 set -euo pipefail
 tag=${1:-localhost/marah-os:minimal}
-base=${BASE:-quay.io/fedora/fedora-bootc:44}
+base=${BASE:-quay.io/fedora/fedora-bootc:45}
 podman=(podman)
 [ "$(id -u)" = 0 ] || podman=(sudo podman)
 

@@ -3,10 +3,12 @@
 # drives both today's cards and the GTX 900/1000 ones newer series dropped. The kernel modules
 # are Universal Blue's, built for this exact kernel and signed with their key (Secure Boot asks
 # to enroll it once). Built by the workflow after :minimal, from the repository root:
-#   podman build --build-arg CORE=IMAGE:minimal --build-arg KERNEL=$(kernel of :minimal) -f nvidia/Containerfile .
+#   podman build --build-arg CORE=IMAGE:minimal --build-arg FEDORA=$(its Fedora version) \
+#     --build-arg KERNEL=$(kernel of :minimal) -f nvidia/Containerfile .
 ARG CORE=ghcr.io/marahhq/marah-os:minimal
+ARG FEDORA
 ARG KERNEL
-FROM ghcr.io/ublue-os/akmods-nvidia-lts:main-44-${KERNEL} AS nvidia
+FROM ghcr.io/ublue-os/akmods-nvidia-lts:main-${FEDORA}-${KERNEL} AS nvidia
 FROM ${CORE}
 ARG KERNEL
 
