@@ -4,32 +4,32 @@ Marah OS turns a PC into a console. It starts straight into
 [Marah Launcher](https://github.com/MarahHQ/marah-launcher), with no desktop.
 
 <!-- x-release-please-start-version -->
-The current version is Marah OS 0.3.0:
-[its release](https://github.com/MarahHQ/marah-os/releases/tag/v0.3.0). Every release is on the
+The current version is Marah OS 0.4.0:
+[its release](https://github.com/MarahHQ/marah-os/releases/tag/v0.4.0). Every release is on the
 [releases page](https://github.com/MarahHQ/marah-os/releases).
 
-The release has one ISO file for a USB stick, `marah-os-x86_64-0.3.0.iso`. An ISO over 2 GiB
-comes in parts (`marah-os-x86_64-0.3.0.iso.part-aa`, `-ab`, …). Download every part, then join
+The release has one ISO file for a USB stick, `marah-os-x86_64-0.4.0.iso`. An ISO over 2 GiB
+comes in parts (`marah-os-x86_64-0.4.0.iso.part-aa`, `-ab`, …). Download every part, then join
 them into the ISO:
 
 - Linux and macOS:
 
   ```sh
-  v=0.3.0
+  v=0.4.0
   cat marah-os-x86_64-$v.iso.part-* > marah-os-x86_64-$v.iso
   ```
 
 - Windows (Command Prompt). Name every part, in order:
 
   ```bat
-  set v=0.3.0
+  set v=0.4.0
   copy /b marah-os-x86_64-%v%.iso.part-aa + marah-os-x86_64-%v%.iso.part-ab marah-os-x86_64-%v%.iso
   ```
 
-Check the ISO against `marah-os-x86_64-0.3.0.iso.sha256`. Each part also has its own `.sha256`.
+Check the ISO against `marah-os-x86_64-0.4.0.iso.sha256`. Each part also has its own `.sha256`.
 
-- Linux: `sha256sum -c marah-os-x86_64-0.3.0.iso.sha256`
-- macOS: `shasum -a 256 -c marah-os-x86_64-0.3.0.iso.sha256`
+- Linux: `sha256sum -c marah-os-x86_64-0.4.0.iso.sha256`
+- macOS: `shasum -a 256 -c marah-os-x86_64-0.4.0.iso.sha256`
 <!-- x-release-please-end -->
 
 Write the ISO to a USB stick and start the PC from it. Marah OS starts from the stick. Then
