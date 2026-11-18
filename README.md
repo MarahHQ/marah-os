@@ -3,6 +3,22 @@
 Marah OS turns a PC into a console. It starts straight into
 [Marah Launcher](https://github.com/MarahHQ/marah-launcher), with no desktop.
 
+## What the PC needs
+
+- A 64-bit Intel or AMD processor (x86-64). PS4 games need a processor with AVX2.
+- A graphics card from AMD, Intel or NVIDIA. PS4 and PS5 games need one with Vulkan 1.3.
+- A disk of 40 GB or more for the install. The install erases the disk you pick.
+- A USB stick of 4 GB or more.
+- Internet for updates. The install itself needs no internet.
+
+Marah OS sets no minimum for memory. PS4 and PS5 games run best with a separate graphics card
+and plenty of memory.
+
+## Download
+
+The latest version is always at
+[releases/latest](https://github.com/MarahHQ/marah-os/releases/latest).
+
 <!-- x-release-please-start-version -->
 The current version is Marah OS 0.5.0:
 [its release](https://github.com/MarahHQ/marah-os/releases/tag/v0.5.0). Every release is on the
@@ -32,13 +48,80 @@ Check the ISO against `marah-os-x86_64-0.5.0.iso.sha256`. Each part also has its
 - macOS: `shasum -a 256 -c marah-os-x86_64-0.5.0.iso.sha256`
 <!-- x-release-please-end -->
 
-Write the ISO to a USB stick and start the PC from it. Marah OS starts from the stick. Then
-choose:
+## Write the USB stick
 
-- **Try it**: play from the USB stick.
-- **Install on this PC**: pick a disk of 40 GB or more. The install erases that whole disk.
-- **Choose partitions instead**: Fedora's installer, to keep another system or use free space.
-  The boot menu of the stick has the same entry, "Install Marah OS (choose partitions)".
+Writing the ISO erases everything on the stick. Use one of these programs:
+
+- [balenaEtcher](https://etcher.balena.io/) (Windows, macOS, Linux): pick the ISO, then the
+  stick, then write.
+- [Fedora Media Writer](https://github.com/FedoraQt/MediaWriter/releases) (Windows, macOS,
+  Linux): pick the ISO file, then the stick, then write.
+- `dd` on Linux. Find the stick's name with `lsblk` first. The wrong name erases another disk.
+
+  ```sh
+  sudo dd if=marah-os-x86_64-<version>.iso of=/dev/sdX bs=4M status=progress oflag=sync
+  ```
+
+## Start the PC from the stick
+
+1. Put the stick in the PC and turn the PC on.
+2. Press the boot-menu key while the PC starts. It is often F12, F11, F10, F8 or Esc. The
+   PC's manual or its start screen names it.
+3. Pick the USB stick.
+
+Secure Boot can stay on. Marah OS starts with Fedora's signed boot files.
+
+The stick's boot menu has three entries:
+
+- **Marah OS**: the default. Marah Launcher shows "Welcome to Marah OS".
+- **Install Marah OS (choose partitions)**: Fedora's installer, to keep another system.
+- **Marah OS (basic graphics)**: the same as the first entry, for a screen that stays black.
+
+## Try it or install it
+
+"Welcome to Marah OS" has these choices:
+
+- **Try it**: play from the USB stick. Nothing on the PC changes.
+- **Install on this PC**: pick a disk of 40 GB or more, then "Erase and install". The install
+  erases that whole disk, Windows included. It can't be undone.
+- **Choose partitions instead** (below the disks): Fedora's installer, to keep Windows or
+  another system, or to use free space. It needs a keyboard and a mouse.
+
+The install copies the Wi-Fi networks you joined on the stick. When it ends, remove the USB stick
+and restart.
+
+## The blue screen (NVIDIA and Secure Boot only)
+
+A PC with an NVIDIA card and Secure Boot on needs one more step. NVIDIA's driver needs a key that
+the PC must accept once. The install, or a later update, queues it. A blue screen comes at the
+next restart:
+
+1. Choose **Enroll MOK**.
+2. Choose **Continue**.
+3. Choose **Yes**.
+4. Type the password `universalblue`.
+5. Choose **Reboot**.
+
+Until you do these steps, the PC runs without NVIDIA's own driver.
+
+## Updates
+
+Marah OS updates itself. Once a day it downloads the next version in the background. It
+downloads only the parts that changed. The new version starts at the next restart, never during
+a game.
+
+- To check now, open Settings → System → **Marah OS updates**, then **Check now**. When an update
+  is ready, the same row shows **Restart**.
+- To go back to the previous version, hold Esc or Shift while the PC starts. The boot menu shows
+  the previous version too.
+
+## When something goes wrong
+
+- **The screen stays black at start**: start from the stick again and pick
+  **Marah OS (basic graphics)**.
+- **The install didn't finish** ("Installation didn't finish"): take a photo of the screen.
+  Then [open an issue](https://github.com/MarahHQ/marah-os/issues/new) with the photo and the PC's
+  model.
 
 ## How it's built
 
