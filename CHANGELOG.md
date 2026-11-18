@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.5.0](https://github.com/MarahHQ/marah-os/compare/v0.4.0...v0.5.0) (2026-11-18)
+
+
+### Features
+
+* bundle Marah Launcher v0.10.0 ([2122416](https://github.com/MarahHQ/marah-os/commit/2122416c6532d39e5580f9290b15f6b74ee3cfcf))
+* bundle Marah Launcher v0.8.0 ([dd16da9](https://github.com/MarahHQ/marah-os/commit/dd16da96ce2cddbfcdb3f4374b7f6d84e7fbac16))
+* bundle Marah Launcher v0.9.0 ([9107ca3](https://github.com/MarahHQ/marah-os/commit/9107ca3f5e71c68f41f8685dcaeb0ab7ad57ac85))
+
+
+### Bug Fixes
+
+* bundle Marah Launcher v0.10.1 ([d8835b6](https://github.com/MarahHQ/marah-os/commit/d8835b6de2569c170cbcdbeef237ed4a89080622))
+
 ## [0.4.0](https://github.com/MarahHQ/marah-os/compare/v0.3.0...v0.4.0) (2026-11-17)
 
 
