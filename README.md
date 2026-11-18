@@ -20,32 +20,32 @@ The latest version is always at
 [releases/latest](https://github.com/MarahHQ/marah-os/releases/latest).
 
 <!-- x-release-please-start-version -->
-The current version is Marah OS 0.5.0:
-[its release](https://github.com/MarahHQ/marah-os/releases/tag/v0.5.0). Every release is on the
+The current version is Marah OS 0.6.0:
+[its release](https://github.com/MarahHQ/marah-os/releases/tag/v0.6.0). Every release is on the
 [releases page](https://github.com/MarahHQ/marah-os/releases).
 
-The release has one ISO file for a USB stick, `marah-os-x86_64-0.5.0.iso`. An ISO over 2 GiB
-comes in parts (`marah-os-x86_64-0.5.0.iso.part-aa`, `-ab`, …). Download every part, then join
+The release has one ISO file for a USB stick, `marah-os-x86_64-0.6.0.iso`. An ISO over 2 GiB
+comes in parts (`marah-os-x86_64-0.6.0.iso.part-aa`, `-ab`, …). Download every part, then join
 them into the ISO:
 
 - Linux and macOS:
 
   ```sh
-  v=0.5.0
+  v=0.6.0
   cat marah-os-x86_64-$v.iso.part-* > marah-os-x86_64-$v.iso
   ```
 
 - Windows (Command Prompt). Name every part, in order:
 
   ```bat
-  set v=0.5.0
+  set v=0.6.0
   copy /b marah-os-x86_64-%v%.iso.part-aa + marah-os-x86_64-%v%.iso.part-ab marah-os-x86_64-%v%.iso
   ```
 
-Check the ISO against `marah-os-x86_64-0.5.0.iso.sha256`. Each part also has its own `.sha256`.
+Check the ISO against `marah-os-x86_64-0.6.0.iso.sha256`. Each part also has its own `.sha256`.
 
-- Linux: `sha256sum -c marah-os-x86_64-0.5.0.iso.sha256`
-- macOS: `shasum -a 256 -c marah-os-x86_64-0.5.0.iso.sha256`
+- Linux: `sha256sum -c marah-os-x86_64-0.6.0.iso.sha256`
+- macOS: `shasum -a 256 -c marah-os-x86_64-0.6.0.iso.sha256`
 <!-- x-release-please-end -->
 
 ## Write the USB stick
