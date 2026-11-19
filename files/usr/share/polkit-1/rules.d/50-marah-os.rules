@@ -11,6 +11,23 @@ polkit.addRule(function (action, subject) {
     }
 });
 
+// Drives: mount a USB drive or a data disk inside the PC, and unmount and eject it (Marah
+// Launcher's Drives panel runs udisksctl). The launcher offers only the player's drives, never the
+// system's own parts. polkit asks an administrator for a disk inside the PC, and Marah OS has no
+// administrator password to type in.
+polkit.addRule(function (action, subject) {
+    var drives = [
+        "org.freedesktop.udisks2.filesystem-mount",
+        "org.freedesktop.udisks2.filesystem-mount-system",
+        "org.freedesktop.udisks2.eject-media",
+        "org.freedesktop.udisks2.power-off-drive",
+    ];
+    if (drives.indexOf(action.id) >= 0 &&
+        subject.user === "player" && subject.local && subject.active) {
+        return polkit.Result.YES;
+    }
+});
+
 // "Check now" for system updates: start the update service instead of waiting for its daily run
 // (`systemctl start marah-os-update.service`). Only starting, and only that unit.
 polkit.addRule(function (action, subject) {
