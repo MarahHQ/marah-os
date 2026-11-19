@@ -34,6 +34,8 @@ RUN set -eux; \
         # Network, Bluetooth, sound: what Settings → System runs (nmcli, bluetoothctl, pactl).
         NetworkManager NetworkManager-wifi wpa_supplicant bluez \
         pipewire pipewire-pulseaudio pipewire-alsa wireplumber alsa-ucm pulseaudio-utils \
+        # Drives: what the Drives panel and the folder browser run to mount and eject (udisksctl).
+        udisks2 \
         # What Marah Launcher and the emulators load (X11/Wayland, audio, input, archives, trailers).
         libX11 libXext libXcursor libXi libXfixes libXrandr libXScrnSaver libXtst \
         libxkbcommon libxkbcommon-x11 libwayland-client libwayland-cursor libwayland-egl \
