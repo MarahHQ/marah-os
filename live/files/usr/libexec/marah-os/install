@@ -3,6 +3,8 @@
 # (/usr/bin/marah-os-install links here):
 #   marah-os-install --disks     the disks it can install on, one per line (no root needed):
 #                                disk PATH SIZE_BYTES WINDOWS(0/1) USB(0/1) MODEL…
+#                                It never lists the stick it started from. If it can't find that
+#                                stick it lists nothing, says why on stderr and exits non-zero.
 #   marah-os-install DISK        "Install on this PC": erase DISK and install Marah OS on it (as
 #                                root, through pkexec). It prints "progress PERCENT TEXT" as it
 #                                goes, then "done TAG [mok] [nvidia-later]" (mok: Secure Boot's key
@@ -27,19 +29,49 @@ key=/usr/share/marah-os/secureboot.der
 store=/run/rootfsbase/var/lib/containers/storage
 min_size=${MARAH_OS_MIN_DISK:-$((40 * 1000 * 1000 * 1000))}
 
-# The stick Marah OS started from: never offered.
-live_disk() {
-    local src
-    src=$(findmnt -no SOURCE /run/initramfs/live 2>/dev/null) || return
-    lsblk -no PKNAME "$src" 2>/dev/null | head -1
+# The disks under a block device, one name per line. lsblk walks down each layer to the disks
+# (md or dm over two disks has two). A loop device (an ISO file on the stick, booted with
+# iso-scan/filename= as GRUB's loopback and Ventoy do) is followed to the device that holds its
+# file, by number: its file name is the initramfs's own. losetup tells that number only to root,
+# so for --disks (no root) the isoscan mount in live_disks finds that device. A CD prints its rom;
+# a loop over a file in memory prints nothing.
+top_disks() {
+    local name type back
+    lsblk -snro NAME,TYPE "$1" 2>/dev/null | while read -r name type; do
+        case "$type" in
+            disk | rom) echo "$name" ;;
+            loop)
+                back=$(losetup -nO BACK-MAJ:MIN "/dev/$name" 2>/dev/null | tr -d ' ')
+                [ -n "$back" ] && [ -b "/dev/block/$back" ] && top_disks "/dev/block/$back"
+                ;;
+        esac
+    done
 }
 
+# The stick Marah OS started from, one disk name per line: never offered. Empty if it isn't found.
+live_disks() {
+    local src
+    {
+        findmnt -no SOURCE /run/initramfs/live 2>/dev/null
+        readlink -f /run/initramfs/livedev 2>/dev/null
+        findmnt -no SOURCE /run/initramfs/isoscan 2>/dev/null
+    } | while read -r src; do
+        [ -b "$src" ] && top_disks "$src"
+    done | sort -u
+}
+
+# The disks Marah OS can be installed on. None if the stick isn't found: it could be one of them.
 disks() {
     local live
-    live=$(live_disk)
+    live=$(live_disks)
+    if [ -z "$live" ]; then
+        echo "The USB stick Marah OS started from wasn't found, so no disk is offered." >&2
+        return 1
+    fi
     # Raw output: one disk per line, spaces inside a value written as \x20 (the model comes last).
     lsblk -dnbr -o NAME,PATH,SIZE,TYPE,RO,MODEL | while read -r name path size type ro model; do
-        [ "$type" = disk ] && [ "$ro" = 0 ] && [ "$name" != "$live" ] || continue
+        [ "$type" = disk ] && [ "$ro" = 0 ] || continue
+        grep -qxF "$name" <<<"$live" && continue
         case "$name" in zram*|loop*|sr*) continue ;; esac
         [ "$size" -ge "$min_size" ] 2>/dev/null || continue
         local windows=0 usb=0
@@ -48,11 +80,12 @@ disks() {
         model=$(printf '%b' "$model" | tr -cd '[:print:]')
         echo "disk $path $size $windows $usb ${model:-Disk}"
     done
+    return 0
 }
 
 if [ "${1:-}" = --disks ]; then
     disks
-    exit 0
+    exit
 fi
 
 progress() { echo "progress $1 $2"; }
