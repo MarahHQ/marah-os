@@ -1,0 +1,27 @@
+name: Check
+
+# `make check` on every pull request and every push to main: the scripts parse, the paths the
+# launcher expects are the ones made (check-brand.sh), and the tests in tests/ pass. It needs no
+# image and no ISO, so it takes seconds.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: make check
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      # Ubuntu 24.04 stops unprivileged user namespaces through AppArmor. A test that runs the
+      # installer in `unshare -rm` (its own mounts, as a fake root) needs them.
+      - name: Allow user namespaces
+        run: sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0
+      - run: make check

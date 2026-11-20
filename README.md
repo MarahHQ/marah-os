@@ -128,8 +128,11 @@ a game.
 The rest of this page is for people working on Marah OS. What Marah Launcher and the OS
 expect from each other (the marker, the installer's protocol, the polkit rules,
 `marah-launcher --supports`) is in
-[docs/marah-os.md](https://github.com/MarahHQ/marah-launcher/blob/main/docs/marah-os.md).
-`check-brand.sh` checks the paths the launcher looks for.
+[docs/contributors/os-contract.md](https://github.com/MarahHQ/marah-launcher/blob/main/docs/contributors/os-contract.md).
+`check-brand.sh` checks the paths the launcher looks for. `tests/` holds the installer's tests:
+`install-disks.sh` checks that it never offers the stick it started from, and
+`install-cancel.sh` that a cancel stops it only before it erases the disk. `make check` runs
+them all, and CI runs `make check` on every pull request (`.github/workflows/check.yml`).
 
 There are two images and one USB stick:
 
