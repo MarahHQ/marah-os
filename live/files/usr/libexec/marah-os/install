@@ -19,7 +19,16 @@
 # It copies the system stored on the stick (no internet needed). On a PC with an NVIDIA graphics
 # card and internet it installs the version with NVIDIA's driver, downloading only the driver;
 # without internet the installed system gets it the first time it's online (marah-os/update).
-# The protocol is docs/marah-os.md's: lines may gain words, never change or lose them.
+# The protocol is in Marah Launcher's docs/contributors/os-contract.md: lines may gain words,
+# never change or lose them.
+#
+# A cancel: Marah Launcher kills pkexec when it can (at the password prompt). It can't kill the
+# installer, which runs as root, so it writes one line, "cancel", to the installer's standard
+# input. The installer reads its input without waiting, at safe points. Before the erase (before
+# "progress 10"), a cancel stops it: it stops the download of NVIDIA's driver, takes back the
+# Secure Boot key it queued, prints "error Cancelled" and exits 1. Once the erase starts, it says
+# "progress PERCENT Can't stop now: the disk is being written" and goes on to its end. The end of
+# the input is no cancel: an older launcher gives /dev/null.
 set -u
 # Where installed PCs update from (ghcr.io/<owner>/marah-os), written into the image at build time.
 repo=$(cat /usr/lib/marah-os/image)
@@ -103,7 +112,31 @@ disk=${1:?usage: marah-os-install --disks | marah-os-install DISK | marah-os-ins
 [ "$(id -u)" = 0 ] || fail "The installer needs to run as root."
 disks | awk '{print $2}' | grep -qxF "$disk" || fail "Marah OS can't be installed on $disk."
 
+# The launcher's requests, on standard input, as fd 3: a job started with & reads /dev/null on
+# its own fd 0, and the meter below reads them too.
+exec 3<&0
+asking=1
+# True when a "cancel" came. It never waits: it reads only lines already there, and stops reading
+# at the end of the input.
+cancel_asked() {
+    local request
+    while [ -n "$asking" ] && read -r -t 0 -u 3; do
+        if IFS= read -r -u 3 request; then
+            [ "$request" = cancel ] && return 0
+        else
+            asking=
+        fi
+    done
+    return 1
+}
+# A cancel before the erase: take back what this run queued, and end.
+stop() {
+    [ -n "${mok:-}" ] && mokutil --revoke-import >/dev/null 2>&1
+    fail "Cancelled"
+}
+
 progress 2 "Getting ready"
+cancel_asked && stop
 tag=minimal
 nvidia=
 for dev in /sys/bus/pci/devices/*; do
@@ -130,12 +163,23 @@ if [ -n "$nvidia" ]; then
         printf 'universalblue\nuniversalblue\n' | mokutil --import "$key" >/dev/null 2>&1 && mokutil --timeout -1 >/dev/null 2>&1 && mok=1
     elif [ -n "$online" ] && [ "${free_kb:-0}" -gt $((6 * 1024 * 1024)) ]; then
         progress 5 "Downloading NVIDIA's driver"
-        if podman pull -q "$repo:minimal-nvidia" >/dev/null 2>&1; then
-            tag=minimal-nvidia
-        fi
+        # In the background, so a cancel can stop it.
+        podman pull -q "$repo:minimal-nvidia" >/dev/null 2>&1 &
+        pull=$!
+        while kill -0 "$pull" 2>/dev/null; do
+            if cancel_asked; then
+                kill "$pull" 2>/dev/null
+                wait "$pull"
+                stop
+            fi
+            sleep 1
+        done
+        wait "$pull" && tag=minimal-nvidia
     fi
 fi
 
+# The last point a cancel stops the install: from here on the disk is erased.
+cancel_asked && stop
 progress 10 "Preparing the disk"
 # bootc says little while it copies the system, so the progress comes from what's been written to
 # the disk, against the system's size (plus about a fifth for the filesystem around it).
@@ -145,10 +189,17 @@ size=$(podman image inspect --format '{{.Size}}' "$repo:$tag" 2>/dev/null || ech
 expected=$((size * 6 / 5))
 start=$(written)
 (
+    copying="Copying Marah OS"
     while sleep 2; do
         pct=$(( 15 + 75 * ($(written) - start) / expected ))
         [ "$pct" -gt 90 ] && pct=90
-        [ "$pct" -gt 15 ] && progress "$pct" "Copying Marah OS"
+        # A cancel now comes too late. The meter says so, and keeps saying it.
+        if cancel_asked; then
+            copying="Can't stop now: the disk is being written"
+            progress "$pct" "$copying"
+        elif [ "$pct" -gt 15 ]; then
+            progress "$pct" "$copying"
+        fi
     done
 ) &
 meter=$!
