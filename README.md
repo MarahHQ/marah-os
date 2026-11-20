@@ -130,8 +130,9 @@ expect from each other (the marker, the installer's protocol, the polkit rules,
 `marah-launcher --supports`) is in
 [docs/contributors/os-contract.md](https://github.com/MarahHQ/marah-launcher/blob/main/docs/contributors/os-contract.md).
 `check-brand.sh` checks the paths the launcher looks for. `tests/` holds the installer's tests:
-`install-disks.sh` checks that it never offers the stick it started from, and
-`install-cancel.sh` that a cancel stops it only before it erases the disk. `make check` runs
+`install-disks.sh` checks that it never offers the stick it started from,
+`install-image.sh` that it installs the system stored on the stick, and `install-cancel.sh`
+that a cancel stops it only before it erases the disk. `make check` runs
 them all, and CI runs `make check` on every pull request (`.github/workflows/check.yml`).
 
 There are two images and one USB stick:
@@ -197,7 +198,8 @@ Boot menu (`live/files/usr/lib/image-builder/bootc/iso.yaml`):
 
 - The minimal image is stored as a read-only container store in the stick's root filesystem
   (`/var/lib/containers/storage` there). The live system sees it at
-  `/run/rootfsbase/var/lib/containers/storage` (`live/files/etc/containers/storage.conf`).
+  `/run/rootfsbase/var/lib/containers/storage`
+  (`live/files/etc/containers/storage.rootful.conf.d/90-marah-os-stick.conf`).
   Podman's own storage and `/var/tmp` are in memory on the stick.
 - **Erase a disk:** `live/files/usr/libexec/marah-os/install` (run by Marah Launcher as `marah-os-install`, a link in `/usr/bin`) lists the disks and installs
   (`bootc install to-disk` from the stored image), with NVIDIA's driver when it applies, and

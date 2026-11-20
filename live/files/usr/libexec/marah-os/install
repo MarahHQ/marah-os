@@ -25,7 +25,8 @@ set -u
 repo=$(cat /usr/lib/marah-os/image)
 key=/usr/share/marah-os/secureboot.der
 # The system stored on the stick: a read-only container store in the stick's own root filesystem
-# (build-iso.sh puts it there), which /etc/containers/storage.conf lists.
+# (build-iso.sh puts it there), which /etc/containers/storage.rootful.conf.d/90-marah-os-stick.conf
+# lists for podman as root.
 store=/run/rootfsbase/var/lib/containers/storage
 min_size=${MARAH_OS_MIN_DISK:-$((40 * 1000 * 1000 * 1000))}
 
@@ -108,6 +109,10 @@ nvidia=
 for dev in /sys/bus/pci/devices/*; do
     [ "$(cat "$dev/vendor" 2>/dev/null)" = 0x10de ] && grep -q '^0x03' "$dev/class" 2>/dev/null && nvidia=1
 done
+# Without the stored system, podman would download all of it into memory (or fail offline): stop
+# before anything is queued or downloaded. The NVIDIA version below still downloads on purpose.
+podman image inspect "$repo:minimal" >/dev/null 2>&1 ||
+    fail "The system stored on this USB stick wasn't found."
 mok=
 if [ -n "$nvidia" ]; then
     secure=
@@ -148,10 +153,13 @@ start=$(written)
 ) &
 meter=$!
 # bootc installs the system from the image it runs in: the one stored on the stick (or the NVIDIA
-# one just downloaded), and the installed PC then updates from $repo:$tag.
+# one just downloaded), and the installed PC then updates from $repo:$tag. The image has Fedora's
+# storage drop-in too, which lists only /usr/lib/containers/storage: the stick's own drop-in,
+# mounted in, puts the stick's store back in that list.
 podman run --rm --privileged --pid=host --security-opt label=type:unconfined_t \
     -v /dev:/dev -v /var/lib/containers:/var/lib/containers -v /run/udev:/run/udev \
     -v /etc/containers/storage.conf:/etc/containers/storage.conf:ro -v "$store:$store:ro" \
+    -v /etc/containers/storage.rootful.conf.d:/etc/containers/storage.rootful.conf.d:ro \
     "$repo:$tag" bootc install to-disk --wipe --target-imgref "$repo:$tag" "$disk" 2>&1 |
 while IFS= read -r line; do
     echo "$line" >&2

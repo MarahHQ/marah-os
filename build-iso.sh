@@ -68,7 +68,7 @@ esac
 if [ "$method" = image-builder ]; then
     # The live container becomes the ISO's squashfs, and the minimal image is copied into its
     # /var/lib/containers/storage (the live system reads it at /run/rootfsbase/var/lib/containers/
-    # storage, see live/files/etc/containers/storage.conf).
+    # storage, see live/files/etc/containers/storage.rootful.conf.d/90-marah-os-stick.conf).
     rm -rf "$work/out"
     "$IMAGE_BUILDER" build --cache "$work/store" --output-dir "$work/out" --bootc-ref "$live" --bootc-default-fs ext4 \
         --bootc-installer-payload-ref "$payload" bootc-generic-iso
