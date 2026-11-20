@@ -52,8 +52,8 @@ payload=$image:minimal
 
 podman build --network=host --build-arg CORE="$payload" -f live/Containerfile -t "$live" .
 
-# The install screens are Marah Launcher's (docs/marah-os.md): a stick whose Marah Launcher has none (an older
-# release) couldn't install anything.
+# The install screens are Marah Launcher's (its docs/contributors/os-contract.md): a stick
+# whose Marah Launcher has none (an older release) couldn't install anything.
 # (No cgroups: this already runs in a container, where podman can't make its own.)
 status=0
 podman run --rm --cgroups=disabled --network=none --entrypoint /usr/bin/marah-launcher "$live" --supports os-install || status=$?
