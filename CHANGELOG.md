@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.10.0](https://github.com/MarahHQ/marah-os/compare/v0.9.0...v0.10.0) (2026-11-20)
+
+
+### Features
+
+* bundle Marah Launcher v0.16.0 ([cc3d97f](https://github.com/MarahHQ/marah-os/commit/cc3d97fb6ecddefd2788a109498758ca7499ed26))
+* the installer stops cleanly when asked before it erases the disk ([#20](https://github.com/MarahHQ/marah-os/issues/20)) ([61a8a43](https://github.com/MarahHQ/marah-os/commit/61a8a4380b4b3de31a221eb0f50b103434d76963))
+* the player mounts and ejects drives from Marah Launcher ([#16](https://github.com/MarahHQ/marah-os/issues/16)) ([aeb5526](https://github.com/MarahHQ/marah-os/commit/aeb55262121813ff536f72695a7614ccd4c988b6))
+
+
+### Bug Fixes
+
+* the installer never offers the USB stick it started from ([#18](https://github.com/MarahHQ/marah-os/issues/18)) ([68cecb8](https://github.com/MarahHQ/marah-os/commit/68cecb8c312b44d78669456b8421f6125e9f026c))
+* the installer uses the system stored on the USB stick, offline ([#19](https://github.com/MarahHQ/marah-os/issues/19)) ([322e810](https://github.com/MarahHQ/marah-os/commit/322e810e30c230fcfc2d412774b41b0c78829db7))
+
 ## [0.9.0](https://github.com/MarahHQ/marah-os/compare/v0.8.0...v0.9.0) (2026-11-19)
 
 
