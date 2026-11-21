@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.1](https://github.com/MarahHQ/marah-os/compare/v0.11.0...v0.11.1) (2026-11-21)
+
+
+### Bug Fixes
+
+* bundle Marah Launcher v0.17.2 ([c4af504](https://github.com/MarahHQ/marah-os/commit/c4af5045e5be411bfbe4bcfe6320f01682a2702d))
+
 ## [0.11.0](https://github.com/MarahHQ/marah-os/compare/v0.10.1...v0.11.0) (2026-11-20)
 
 
